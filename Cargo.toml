@@ -2,6 +2,12 @@
 name = "no-std-compat"
 version = "0.1.0"
 authors = ["jD91mZM2 <me@krake.one>"]
+exclude = [ "example/**/*" ]
+description = "A `#![no_std]` compatibility layer that will make porting your crate to no_std *easy*."
+repository = "https://gitlab.com/jD91mZM2/no-std-compat"
+categories = [ "no-std" ]
+license = "MIT"
+readme = "README.md"
 edition = "2018"
 
 [dev-dependencies]
