@@ -25,7 +25,11 @@ if args.src is None:
 
 # Read files
 
-modules_regex = re.compile(r"pub\s*mod\s*([a-zA-Z][a-zA-Z0-9]*);")
+modules_regex = re.compile(
+    r"^(?:\S.*)?pub\s+(?:mod\s+|use\s+(?:[a-zA-Z_][a-zA-Z0-9_]*::)*)"
+    r"([a-zA-Z_][a-zA-Z0-9_]*);",
+    re.MULTILINE
+)
 
 
 def modules(crate):

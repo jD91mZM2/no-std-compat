@@ -7,6 +7,9 @@ pub mod alloc {
 pub mod any {
     pub use core::any::*;
 }
+pub mod arch {
+    pub use core::arch::*;
+}
 pub mod array {
     pub use core::array::*;
 }
@@ -129,6 +132,9 @@ pub mod ptr {
 }
 pub mod raw {
     pub use core::raw::*;
+}
+pub mod raw_vec {
+    #[cfg(feature = "alloc")] pub use alloc::raw_vec::*;
 }
 pub mod rc {
     #[cfg(feature = "alloc")] pub use alloc::rc::*;

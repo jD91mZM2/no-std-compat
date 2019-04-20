@@ -1,5 +1,5 @@
 #![cfg_attr(not(feature = "std"), no_std, feature(fixed_size_array, futures_api, core_intrinsics, core_panic_info, core_panic, raw, unicode_internals))]
-#![cfg_attr(all(not(feature = "std"), feature = "alloc"), feature(alloc_prelude))]
+#![cfg_attr(all(not(feature = "std"), feature = "alloc"), feature(alloc_prelude, raw_vec_internals))]
 
 #[cfg(all(not(feature = "std"), feature = "alloc"))]
 extern crate alloc;
