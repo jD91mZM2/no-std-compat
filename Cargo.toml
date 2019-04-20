@@ -1,0 +1,17 @@
+[package]
+name = "no-std-compat"
+version = "0.1.0"
+authors = ["jD91mZM2 <me@krake.one>"]
+edition = "2018"
+
+[dev-dependencies]
+libc = "0.2.51"
+
+[profile.dev]
+panic = "abort"
+
+[features]
+alloc = []
+std = []
+compat_hash = []
+compat_macros = []

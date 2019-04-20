@@ -1,0 +1,13 @@
+[package]
+name = "alloc"
+version = "0.1.0"
+authors = ["jD91mZM2 <me@krake.one>"]
+edition = "2018"
+
+[dependencies.no-std-compat]
+path = "../../"
+features = [ "alloc" ]
+
+[features]
+std = [ "no-std-compat/std" ]
+compat_hash = [ "no-std-compat/compat_hash" ]

@@ -1,0 +1,11 @@
+[package]
+name = "core"
+version = "0.1.0"
+authors = ["jD91mZM2 <me@krake.one>"]
+edition = "2018"
+
+[dependencies.no-std-compat]
+path = "../../"
+
+[features]
+std = [ "no-std-compat/std" ]
