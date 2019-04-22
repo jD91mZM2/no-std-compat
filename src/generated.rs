@@ -37,8 +37,8 @@ pub mod cmp {
 }
 pub mod collections {
     #[cfg(feature = "alloc")] pub use alloc::collections::*;
-    #[cfg(all(feature = "alloc", feature = "compat_hash"))] pub use alloc::collections::BTreeMap as HashMap;
-    #[cfg(all(feature = "alloc", feature = "compat_hash"))] pub use alloc::collections::BTreeSet as HashSet;
+    #[cfg(all(feature = "alloc", feature = "compat_hash"))] pub use hashbrown::HashMap;
+    #[cfg(all(feature = "alloc", feature = "compat_hash"))] pub use hashbrown::HashSet;
 }
 pub mod convert {
     pub use core::convert::*;
@@ -62,9 +62,8 @@ pub mod fmt {
 pub mod future {
     pub use core::future::*;
 }
-#[cfg(feature = "compat_hash")]
 pub mod hash {
-    pub use core::cmp::Ord as Hash;
+    pub use core::hash::*;
 }
 pub mod hint {
     pub use core::hint::*;

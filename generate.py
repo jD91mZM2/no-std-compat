@@ -57,11 +57,11 @@ def generate(module, *namespaces):
             "    #[cfg(all("
             "feature = \"alloc\", "
             "feature = \"compat_hash\""
-            "))] pub use alloc::collections::"
+            "))] pub use hashbrown::"
         )
         out += (
-            prefix + "BTreeMap as HashMap;\n" +
-            prefix + "BTreeSet as HashSet;\n"
+            prefix + "HashMap;\n" +
+            prefix + "HashSet;\n"
         )
 
     out += "}"
@@ -80,10 +80,6 @@ for module in core - alloc:
 for module in alloc - core:
     generated[module] = generate(module, "alloc")
 
-generated["hash"] = """#[cfg(feature = "compat_hash")]
-pub mod hash {
-    pub use core::cmp::Ord as Hash;
-}"""
 generated["prelude"] = """pub mod prelude {
     pub mod v1 {
         pub use core::prelude::v1::*;
