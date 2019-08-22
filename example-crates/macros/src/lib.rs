@@ -16,6 +16,7 @@ pub fn greet(who: &str) {
         eprint!(":|")
     }
     println!("Hello, {}.", who);
-    print!("Nice to meet you!");
+    let (meet, you) = dbg!("meet", "you");
+    print!("Nice to {} {}!", meet, you);
     println!();
 }

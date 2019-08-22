@@ -1,0 +1,6 @@
+[workspace]
+members = [
+    "alloc",
+    "core",
+    "macros",
+]

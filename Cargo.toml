@@ -1,6 +1,6 @@
 [package]
 name = "no-std-compat"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["jD91mZM2 <me@krake.one>"]
 exclude = [ "example/**/*" ]
 description = "A `#![no_std]` compatibility layer that will make porting your crate to no_std *easy*."
@@ -11,10 +11,10 @@ readme = "README.md"
 edition = "2018"
 
 [dependencies]
-hashbrown = { version = "0.2.2", optional = true }
+hashbrown = { version = "0.6.0", optional = true }
 
 [dev-dependencies]
-libc = "0.2.51"
+libc = "0.2.62"
 
 [profile.dev]
 panic = "abort"

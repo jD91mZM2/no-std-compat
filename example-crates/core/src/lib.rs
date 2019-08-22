@@ -2,13 +2,7 @@
 
 extern crate no_std_compat as std;
 
-// use std::prelude::v1::*;
-
-// ^ Not needed when only using core; Rust inserts
-// ```rust
-// use core::prelude::v1::*
-// ```
-// by default...
+use std::prelude::v1::*;
 
 use std::{
     num::NonZeroUsize,

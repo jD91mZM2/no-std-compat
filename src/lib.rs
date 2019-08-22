@@ -45,5 +45,5 @@ macro_rules! eprintln {
 #[macro_export]
 macro_rules! dbg {
     () => {};
-    ($val:expr) => { $val }
+    ($($val:expr),+) => { ($($val),+) }
 }
