@@ -50,7 +50,7 @@ def generate(module, *namespaces):
         out += "    "
         if namespace != "core":
             out += f"#[cfg(feature = \"{namespace}\")] "
-        out += f"pub use {namespace}::{module}::*;\n"
+        out += f"pub use __{namespace}::{module}::*;\n"
 
     if module == "collections":
         prefix = (
@@ -82,10 +82,10 @@ for module in alloc - core:
 
 generated["prelude"] = """pub mod prelude {
     pub mod v1 {
-        pub use core::prelude::v1::*;
+        pub use __core::prelude::v1::*;
 
-        #[cfg(feature = "alloc")] pub use alloc::prelude::v1::*;
-        #[cfg(feature = "alloc")] pub use alloc::{format, vec};
+        #[cfg(feature = "alloc")] pub use __alloc::prelude::v1::*;
+        #[cfg(feature = "alloc")] pub use __alloc::{format, vec};
         #[cfg(feature = "compat_macros")]
         pub use crate::{print, println, eprint, eprintln, dbg};
     }
