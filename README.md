@@ -3,6 +3,9 @@
 A `#![no_std]` compatibility layer that will make porting your crate
 to no_std *easy*.
 
+It supports stable rust by default since no-std-compat version 0.1.2
+([See issue #2](https://gitlab.com/jD91mZM2/no-std-compat/issues/2)).
+
 # Why?
 
 In Rust, you can disable the standard library (see
@@ -21,9 +24,10 @@ to care, because everything is still under `std` even though some
 features don't work there.
 
 Many crates migrating to `#![no_std]` today write a small module
-called `std` that forwards imports libcore and liballoc together. This
-effort should be **unified**. We're stronger if not every single one
-of us needs to hit and figure out how to fix the same errors.
+called `std` that forwards imports libcore and liballoc
+together. These efforts should be **unified**. We're stronger if not
+every single one of us needs to hit and figure out how to fix the same
+errors.
 
 # Usage
 
@@ -35,7 +39,7 @@ should only need few conditional compilation attributes.
 
 *Examples can be found in the `examples/` folder.*
 
-1. Add this crate to Cargo.toml, and enable any features you want to
+1​. Add this crate to Cargo.toml, and enable any features you want to
    require (see next section).
 
 `Cargo.toml`:
@@ -45,7 +49,7 @@ should only need few conditional compilation attributes.
 no-std-compat = { version = "...", features = [ "alloc" ] }
 ```
 
-2. Optionally, add a `std` flag that pulls in the entire standard
+2​. Optionally, add a `std` flag that pulls in the entire standard
    library and bypasses this compatibility crate. This is useful so
    you can use the standard library for debugging and for extra
    functionality for those who support it. The below code *optionally*
@@ -60,7 +64,7 @@ default = [ "std" ] # Default to using the std
 std = [ "no-std-compat/std" ]
 ```
 
-3. Optionally enable `no_std`, and import this crate renamed to
+3​. Optionally enable `no_std`, and import this crate renamed to
    `std`. This ensures all old imports still work on `no_std`. You
    could, of course, use any other name too. But this is what I would
    recommend.
@@ -73,7 +77,7 @@ std = [ "no-std-compat/std" ]
 extern crate no_std_compat as std;
 ```
 
-4. Import the prelude *in all files*. This is because in `no_std`,
+4​. Import the prelude *in all files*. This is because in `no_std`,
    rust removes the `std` import and instead only imports the `core`
    prelude. That is: Currently, it doesn't import the `alloc` prelude
    on its own. This also imports macros and other needed stuff.
@@ -94,13 +98,17 @@ use std::prelude::v1::*;
    overrides all other features. This effectively bypasses this crate
    completely. This is here to avoid needing feature gates: Just
    forward your optional `std` feature to here, we handle the rest.
- - `compat_hash`: This (perhaps a little hacky) feature remaps
-   `std::hash::Hash` to `std::cmp::Ord`. It further links `HashMap` to
-   `BTreeMap`. The point is so you can keep using the fast HashMap for
-   those who have the standard library, and fall back to BTreeMap for
-   those who do not. Be adviced, however, that this used in a public
-   function signature could be confusing and should perhaps be
-   avoided. But that is up to you!
+ - `unstable`: This feature also re-exports all unstable modules,
+   which isn't possible to do unless you compile with nightly. Unless
+   you need an unstable module, this crate supports stable rust.
+ - `compat_hash`: This pulls in
+   [hashbrown](https://github.com/rust-lang/hashbrown) (which is not
+   HashDoS-resistant!! but #![no_std]). The point is so you can keep
+   using the standard, safe, HashMap for those who have the standard
+   library, and fall back to a less ideal alternative for those who do
+   not. Be adviced, however, that this used in a public function
+   signature could be confusing and should perhaps be avoided. But
+   that is up to you!
  - `compat_macros`: This feature adds dummy `println`, `eprintln`,
    `dbg`, etc. implementations that do absolutely nothing. The point
    is that any debug functions or other loggings that are not required
@@ -132,7 +140,5 @@ If rust complains about a feature being required but not specified, or
 maybe about a feature being unused, this is because some imports are
 behind feature gates, and feature gates change. More often than not it
 is as trivial as adding or removing stuff from the long, long line in
-`src/lib.rs` that specifies features.
-
-When using the `std` feature flag, no features are used and stable
-rust is possible.
+`src/lib.rs` that specifies features. Should only be a problem when
+using the `unstable` feature.

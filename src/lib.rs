@@ -1,5 +1,8 @@
-#![cfg_attr(not(feature = "std"), no_std, feature(fixed_size_array, core_intrinsics, core_panic_info, core_panic, raw, unicode_internals))]
-#![cfg_attr(all(not(feature = "std"), feature = "alloc"), feature(alloc_prelude, raw_vec_internals))]
+#![cfg_attr(not(feature = "std"), no_std)]
+#![cfg_attr(all(not(feature = "std"), feature = "unstable"),
+            feature(core_intrinsics, core_panic_info, core_panic, raw, unicode_internals))]
+#![cfg_attr(all(not(feature = "std"), feature = "alloc", feature = "unstable"),
+            feature(alloc_prelude, raw_vec_internals))]
 
 // The 2 underscores are used to avoid ambiguity (see
 // https://gitlab.com/jD91mZM2/no-std-compat/issues/1)

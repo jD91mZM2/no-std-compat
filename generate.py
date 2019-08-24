@@ -4,6 +4,7 @@ import argparse
 import os
 import re
 import subprocess
+import sys
 
 # Parse arguments
 
@@ -33,14 +34,35 @@ modules_regex = re.compile(
 
 
 def modules(crate):
-    crate = os.path.join(args.src, crate, "lib.rs")
-    with open(crate) as f:
+    root = os.path.join(args.src, crate)
+    lib = os.path.join(root, "lib.rs")
+    with open(lib) as f:
         contents = f.read()
 
-    return set(match.group(1) for match in modules_regex.finditer(contents))
+    modules = set()
+    for match in modules_regex.finditer(contents):
+        module = match.group(1)
+        unstable = False
+
+        path = os.path.join(root, module + ".rs")
+        if not os.path.isfile(path):
+            path = os.path.join(root, module, "mod.rs")
+        try:
+            with open(path, "r") as f:
+                unstable = "#![unstable" in f.read()
+                if unstable:
+                    print(
+                        f"Module '{module}' from '{crate}' appears unstable",
+                        file=sys.stderr
+                    )
+        except OSError:
+            pass
+
+        modules.add((module, unstable))
+    return modules
 
 
-def generate(module, *namespaces):
+def generate(module, unstable, *namespaces):
     out = f"pub mod {module} {{\n"
 
     if module == "prelude":
@@ -48,8 +70,18 @@ def generate(module, *namespaces):
 
     for namespace in namespaces:
         out += "    "
+
+        cfgs = []
         if namespace != "core":
-            out += f"#[cfg(feature = \"{namespace}\")] "
+            cfgs.append(f"feature = \"{namespace}\"")
+        if unstable:
+            cfgs.append("feature = \"unstable\"")
+
+        if len(cfgs) == 1:
+            out += f"#[cfg({cfgs[0]})] "
+        elif len(cfgs) > 1:
+            out += "#[cfg(all(" + ", ".join(cfgs) + "))] "
+
         out += f"pub use __{namespace}::{module}::*;\n"
 
     if module == "collections":
@@ -73,19 +105,32 @@ alloc = modules("liballoc")
 
 generated = {}
 
-for module in core & alloc:
-    generated[module] = generate(module, "core", "alloc")
-for module in core - alloc:
-    generated[module] = generate(module, "core")
-for module in alloc - core:
-    generated[module] = generate(module, "alloc")
+for module, unstable in core & alloc:
+    generated[module] = generate(module, unstable, "core", "alloc")
+for module, unstable in core - alloc:
+    generated[module] = generate(module, unstable, "core")
+for module, unstable in alloc - core:
+    generated[module] = generate(module, unstable, "alloc")
 
 generated["prelude"] = """pub mod prelude {
     pub mod v1 {
+        // Prelude
         pub use __core::prelude::v1::*;
+        #[cfg(all(feature = "alloc", feature = "unstable"))]
+        pub use __alloc::prelude::v1::*;
+        #[cfg(all(feature = "alloc", not(feature = "unstable")))]
+        pub use __alloc::{
+            borrow::ToOwned,
+            boxed::Box,
+            // UNSTABLE: slice::SliceConcatExt,
+            string::String,
+            string::ToString,
+            vec::Vec,
+        };
 
-        #[cfg(feature = "alloc")] pub use __alloc::prelude::v1::*;
-        #[cfg(feature = "alloc")] pub use __alloc::{format, vec};
+        // Other imports
+        #[cfg(feature = "alloc")]
+        pub use __alloc::{format, vec};
         #[cfg(feature = "compat_macros")]
         pub use crate::{print, println, eprint, eprintln, dbg};
     }

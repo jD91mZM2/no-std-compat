@@ -27,3 +27,4 @@ std = []
 # Luckily, hashbrown is really small.
 compat_hash = ["hashbrown"]
 compat_macros = []
+unstable = []

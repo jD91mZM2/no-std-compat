@@ -84,7 +84,7 @@ pub mod i8 {
     pub use __core::i8::*;
 }
 pub mod intrinsics {
-    pub use __core::intrinsics::*;
+    #[cfg(feature = "unstable")] pub use __core::intrinsics::*;
 }
 pub mod isize {
     pub use __core::isize::*;
@@ -108,20 +108,33 @@ pub mod option {
     pub use __core::option::*;
 }
 pub mod panic {
-    pub use __core::panic::*;
+    #[cfg(feature = "unstable")] pub use __core::panic::*;
 }
 pub mod panicking {
-    pub use __core::panicking::*;
+    #[cfg(feature = "unstable")] pub use __core::panicking::*;
 }
 pub mod pin {
     pub use __core::pin::*;
 }
 pub mod prelude {
     pub mod v1 {
+        // Prelude
         pub use __core::prelude::v1::*;
+        #[cfg(all(feature = "alloc", feature = "unstable"))]
+        pub use __alloc::prelude::v1::*;
+        #[cfg(all(feature = "alloc", not(feature = "unstable")))]
+        pub use __alloc::{
+            borrow::ToOwned,
+            boxed::Box,
+            slice::SliceConcatExt,
+            string::String,
+            string::ToString,
+            vec::Vec,
+        };
 
-        #[cfg(feature = "alloc")] pub use __alloc::prelude::v1::*;
-        #[cfg(feature = "alloc")] pub use __alloc::{format, vec};
+        // Other imports
+        #[cfg(feature = "alloc")]
+        pub use __alloc::{format, vec};
         #[cfg(feature = "compat_macros")]
         pub use crate::{print, println, eprint, eprintln, dbg};
     }
@@ -130,10 +143,10 @@ pub mod ptr {
     pub use __core::ptr::*;
 }
 pub mod raw {
-    pub use __core::raw::*;
+    #[cfg(feature = "unstable")] pub use __core::raw::*;
 }
 pub mod raw_vec {
-    #[cfg(feature = "alloc")] pub use __alloc::raw_vec::*;
+    #[cfg(all(feature = "alloc", feature = "unstable"))] pub use __alloc::raw_vec::*;
 }
 pub mod rc {
     #[cfg(feature = "alloc")] pub use __alloc::rc::*;
@@ -178,7 +191,7 @@ pub mod u8 {
     pub use __core::u8::*;
 }
 pub mod unicode {
-    pub use __core::unicode::*;
+    #[cfg(feature = "unstable")] pub use __core::unicode::*;
 }
 pub mod usize {
     pub use __core::usize::*;
