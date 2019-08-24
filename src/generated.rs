@@ -126,7 +126,7 @@ pub mod prelude {
         pub use __alloc::{
             borrow::ToOwned,
             boxed::Box,
-            slice::SliceConcatExt,
+            // UNSTABLE: slice::SliceConcatExt,
             string::String,
             string::ToString,
             vec::Vec,

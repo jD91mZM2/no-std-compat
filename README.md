@@ -3,7 +3,7 @@
 A `#![no_std]` compatibility layer that will make porting your crate
 to no_std *easy*.
 
-It supports stable rust by default since no-std-compat version 0.1.2
+It supports stable rust by default since no-std-compat version 0.2.0
 ([See issue #2](https://gitlab.com/jD91mZM2/no-std-compat/issues/2)).
 
 # Why?

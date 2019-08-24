@@ -22,9 +22,9 @@ panic = "abort"
 [features]
 alloc = []
 std = []
+unstable = []
 # This will sadly also add hashbrown even if overriden by std. Cargo
 # does not seem to provide any cfg(compat_hash && !std) functionality.
 # Luckily, hashbrown is really small.
 compat_hash = ["hashbrown"]
 compat_macros = []
-unstable = []
