@@ -1,52 +1,70 @@
-#![cfg_attr(not(feature = "std"), no_std)]
+#![no_std]
 #![cfg_attr(all(not(feature = "std"), feature = "unstable"),
             feature(core_intrinsics, core_panic_info, core_panic, raw, unicode_internals))]
 #![cfg_attr(all(not(feature = "std"), feature = "alloc", feature = "unstable"),
             feature(alloc_prelude, raw_vec_internals))]
 
-// The 2 underscores are used to avoid ambiguity (see
-// https://gitlab.com/jD91mZM2/no-std-compat/issues/1)
-#[cfg(all(not(feature = "std"), feature = "alloc"))]
-extern crate alloc as __alloc;
-extern crate core as __core;
+// Can't use cfg_if! because it does not allow nesting :(
 
-#[cfg(not(feature = "std"))]
-mod generated;
+// Actually, can't even generate #[cfg]s any other way because of
+// https://github.com/rust-lang/rust/pull/52234#issuecomment-486810130
 
-#[cfg(not(feature = "std"))]
-pub use self::generated::*;
-#[cfg(feature = "std")]
-pub use std::*;
+// if #[cfg(feature = "std")] {
+    #[cfg(feature = "std")]
+    extern crate std;
+// } else {
+    #[cfg(not(feature = "std"))]
+    // The 2 underscores in the crate names are used to avoid
+    // ambiguity between whether the user wants to use the public
+    // module std::alloc or the private crate no_std_compat::alloc
+    // (see https://gitlab.com/jD91mZM2/no-std-compat/issues/1)
 
-#[cfg(all(not(feature = "std"), feature = "compat_macros"))]
-#[macro_export]
-macro_rules! print {
-    () => {{}};
-    ($($arg:tt)+) => {{
-        // Avoid unused arguments complaint. This surely must get
-        // optimized away? TODO: Verify that
-        let _ = format_args!($($arg)+);
-    }};
-}
-#[cfg(all(not(feature = "std"), feature = "compat_macros"))]
-#[macro_export]
-macro_rules! println {
-    ($($arg:tt)*) => { print!($($arg)*) }
-}
-#[cfg(all(not(feature = "std"), feature = "compat_macros"))]
-#[macro_export]
-macro_rules! eprint {
-    ($($arg:tt)*) => { print!($($arg)*) }
-}
-#[cfg(all(not(feature = "std"), feature = "compat_macros"))]
-#[macro_export]
-macro_rules! eprintln {
-    ($($arg:tt)*) => { print!($($arg)*) }
-}
+    // if #[cfg(feature = "alloc")] {
+        #[cfg(all(not(feature = "std"), feature = "alloc"))]
+        extern crate alloc as __alloc;
+    // }
 
-#[cfg(all(not(feature = "std"), feature = "compat_macros"))]
-#[macro_export]
-macro_rules! dbg {
-    () => {};
-    ($($val:expr),+) => { ($($val),+) }
-}
+    #[cfg(not(feature = "std"))]
+    extern crate core as __core;
+
+    #[cfg(not(feature = "std"))]
+    mod generated;
+
+    #[cfg(not(feature = "std"))]
+    pub use self::generated::*;
+
+    // if #[cfg(feature = "compat_macros")] {
+        #[cfg(all(not(feature = "std"), feature = "compat_macros"))]
+        #[macro_export]
+        macro_rules! print {
+            () => {{}};
+            ($($arg:tt)+) => {{
+                // Avoid unused arguments complaint. This surely must get
+                // optimized away? TODO: Verify that
+                let _ = format_args!($($arg)+);
+            }};
+        }
+        #[cfg(all(not(feature = "std"), feature = "compat_macros"))]
+        #[macro_export]
+        macro_rules! println {
+            ($($arg:tt)*) => { print!($($arg)*) }
+        }
+        #[cfg(all(not(feature = "std"), feature = "compat_macros"))]
+        #[macro_export]
+        macro_rules! eprint {
+            ($($arg:tt)*) => { print!($($arg)*) }
+        }
+        #[cfg(all(not(feature = "std"), feature = "compat_macros"))]
+        #[macro_export]
+        macro_rules! eprintln {
+            ($($arg:tt)*) => { print!($($arg)*) }
+        }
+
+        #[cfg(all(not(feature = "std"), feature = "compat_macros"))]
+        #[macro_export]
+        macro_rules! dbg {
+            () => {};
+            ($($val:expr),+) => { ($($val),+) }
+        }
+    // }
+// }

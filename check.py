@@ -18,16 +18,21 @@ def powerset(input):
     return subset + with_pivot
 
 
+def execute(args, **kwargs):
+    cwd = ""
+    if "cwd" in kwargs:
+        cwd += kwargs["cwd"] + "/ "
+    print(cwd + "$ " + " ".join(args))
+    status = subprocess.run(args, **kwargs)
+
+    if status.returncode != 0:
+        sys.exit(1)
+
+
 def check(toolchain, features):
     for subset in powerset(features):
         feature_str = ",".join(subset)
-        print("$ cargo +" + toolchain + " check --features " + feature_str)
-
-        status = subprocess.run([
-            "cargo", "+" + toolchain, "check", "--features", feature_str
-        ])
-        if status.returncode != 0:
-            sys.exit(1)
+        execute(["cargo", "+" + toolchain, "check", "--features", feature_str])
 
 
 features = [
@@ -40,3 +45,5 @@ features = [
 
 check("stable", features)
 check("nightly", features + ["unstable"])
+
+execute(["cargo", "test"], cwd="example-crates")
