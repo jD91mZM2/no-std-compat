@@ -109,6 +109,9 @@ use std::prelude::v1::*;
    not. Be adviced, however, that this used in a public function
    signature could be confusing and should perhaps be avoided. But
    that is up to you!
+ - `compat_sync`: This pulls in
+   [spin](https://github.com/mvdnes/spin-rs) and provides replacements
+   for several things used in `std::sync`.
  - `compat_macros`: This feature adds dummy `println`, `eprintln`,
    `dbg`, etc. implementations that do absolutely nothing. The point
    is that any debug functions or other loggings that are not required
