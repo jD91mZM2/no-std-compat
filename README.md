@@ -37,7 +37,7 @@ goal is to turn more crates into `#![no_std]` compatible. It also has
 in mind to support the std, as well as supporting no std, meaning you
 should only need few conditional compilation attributes.
 
-*Examples can be found in the `examples/` folder.*
+*Examples can be found in the `example-crates/` folder.*
 
 1​. Add this crate to Cargo.toml, and enable any features you want to
    require (see next section).
@@ -106,7 +106,7 @@ use std::prelude::v1::*;
    HashDoS-resistant!! but #![no_std]). The point is so you can keep
    using the standard, safe, HashMap for those who have the standard
    library, and fall back to a less ideal alternative for those who do
-   not. Be adviced, however, that this used in a public function
+   not. Be advised, however, that this used in a public function
    signature could be confusing and should perhaps be avoided. But
    that is up to you!
  - `compat_macros`: This feature adds dummy `println`, `eprintln`,
