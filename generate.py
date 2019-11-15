@@ -96,6 +96,19 @@ def generate(module, unstable, *namespaces):
             prefix + "HashSet;\n"
         )
 
+    if module == "sync":
+        prefix = (
+            "    #[cfg(all("
+            "feature = \"alloc\", "
+            "feature = \"compat_sync\""
+            "))] pub use spin::"
+        )
+        out += (
+            prefix + "RwLock;\n" +
+            prefix + "RwLockReadGuard;\n" +
+            prefix + "RwLockWriteGuard;\n"
+        )
+
     out += "}"
     return out
 
