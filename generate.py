@@ -19,7 +19,7 @@ args = parser.parse_args()
 
 if args.src is None:
     output = subprocess.run(["rustc", "--print", "sysroot"],
-                            capture_output=True)
+                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     args.src = os.path.join(output.stdout.decode("utf-8").strip(),
                             "lib", "rustlib", "src", "rust", "src")
 
