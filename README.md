@@ -6,7 +6,7 @@ to no_std *easy*.
 It supports stable rust by default since no-std-compat version 0.2.0
 ([See issue #2](https://gitlab.com/jD91mZM2/no-std-compat/issues/2)).
 
-# Why?
+## Why this exists
 
 In Rust, you can disable the standard library (see
 [here](https://docs.rust-embedded.org/embedonomicon/smallest-no-std.html)). Doing
@@ -29,7 +29,7 @@ together. These efforts should be **unified**. We're stronger if not
 every single one of us needs to hit and figure out how to fix the same
 errors.
 
-# Usage
+## Usage
 
 This library is designed to require as few lines of code as possible,
 so that these can be copy-pasted to a bunch of different libraries. My
@@ -90,36 +90,33 @@ use std::prelude::v1::*;
 
 ## Optional features
 
- - `alloc`: This feature pulls in `alloc` and exposes it in all the
-   usual locations. I.e `std::collection` gets mapped to
-   `alloc::collections` and all the allocation stuff is added to the
-   prelude.
- - `std`: This feature pulls in the entire standard library and
-   overrides all other features. This effectively bypasses this crate
-   completely. This is here to avoid needing feature gates: Just
-   forward your optional `std` feature to here, we handle the rest.
- - `unstable`: This feature also re-exports all unstable modules,
-   which isn't possible to do unless you compile with nightly. Unless
-   you need an unstable module, this crate supports stable rust.
- - `compat_hash`: This pulls in
-   [hashbrown](https://github.com/rust-lang/hashbrown) (which is not
-   HashDoS-resistant!! but #![no_std]). The point is so you can keep
-   using the standard, safe, HashMap for those who have the standard
-   library, and fall back to a less ideal alternative for those who do
-   not. Be advised, however, that this used in a public function
-   signature could be confusing and should perhaps be avoided. But
-   that is up to you!
- - `compat_sync`: This pulls in
-   [spin](https://github.com/mvdnes/spin-rs) and provides replacements
-   for several things used in `std::sync`.
- - `compat_macros`: This feature adds dummy `println`, `eprintln`,
-   `dbg`, etc. implementations that do absolutely nothing. The point
-   is that any debug functions or other loggings that are not required
-   for the library to function, just stay silent in `no_std`.
+- `alloc`: This feature pulls in `alloc` and exposes it in all the usual
+  locations. I.e `std::collection` gets mapped to `alloc::collections` and all
+  the allocation stuff is added to the prelude.
+- `std`: This feature pulls in the entire standard library and overrides all
+  other features. This effectively bypasses this crate completely. This is here
+  to avoid needing feature gates: Just forward your optional `std` feature to
+  here, we handle the rest.
+- `unstable`: This feature also re-exports all unstable modules, which isn't
+  possible to do unless you compile with nightly. Unless you need an unstable
+  module, this crate supports stable rust.
+- `compat_hash`: This pulls in
+  [hashbrown](https://github.com/rust-lang/hashbrown) (which is not
+  HashDoS-resistant!! but #![no_std]). The point is so you can keep using the
+  standard, safe, HashMap for those who have the standard library, and fall
+  back to a less ideal alternative for those who do not. Be advised, however,
+  that this used in a public function signature could be confusing and should
+  perhaps be avoided. But that is up to you!
+- `compat_sync`: This pulls in [spin](https://github.com/mvdnes/spin-rs) and
+  provides replacements for several things used in `std::sync`.
+- `compat_macros`: This feature adds dummy `println`, `eprintln`, `dbg`,
+  etc. implementations that do absolutely nothing. The point is that any debug
+  functions or other loggings that are not required for the library to
+  function, just stay silent in `no_std`.
 
-# Contributing
+## Contributing
 
-## Updating the glue
+### Updating the glue
 
 Did you pull this crate and realize that it's outdated? Lucky for you,
 this crate came prepared. The glue can simply be regenerated with a
@@ -127,6 +124,7 @@ python script.
 
 Make sure you have the rust source downloaded somewhere. With rustup,
 it's a non-issue:
+
 ```rust
 rustup component add rust-src
 ```
@@ -137,7 +135,7 @@ specify the source directory with `--src`. It's that easy. You can
 also, of course, run `./generate.py --help` if you forgot the argument
 name.
 
-## Updating the feature list
+### Updating the feature list
 
 If rust complains about a feature being required but not specified, or
 maybe about a feature being unused, this is because some imports are

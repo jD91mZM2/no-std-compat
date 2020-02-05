@@ -1,7 +1,7 @@
 [workspace]
 members = [
-    "alloc",
-    "core",
+    "liballoc",
+    "libcore",
     "macros",
     "unstable",
 ]

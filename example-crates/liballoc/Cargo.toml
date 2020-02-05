@@ -1,5 +1,5 @@
 [package]
-name = "alloc"
+name = "liballoc"
 version = "0.1.0"
 authors = ["jD91mZM2 <me@krake.one>"]
 edition = "2018"
