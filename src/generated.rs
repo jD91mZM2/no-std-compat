@@ -168,6 +168,9 @@ pub mod string {
 pub mod sync {
     pub use __core::sync::*;
     #[cfg(feature = "alloc")] pub use __alloc::sync::*;
+    #[cfg(all(feature = "alloc", feature = "compat_sync"))] pub use spin::Mutex;
+    #[cfg(all(feature = "alloc", feature = "compat_sync"))] pub use spin::MutexGuard;
+    #[cfg(all(feature = "alloc", feature = "compat_sync"))] pub use spin::Once;
     #[cfg(all(feature = "alloc", feature = "compat_sync"))] pub use spin::RwLock;
     #[cfg(all(feature = "alloc", feature = "compat_sync"))] pub use spin::RwLockReadGuard;
     #[cfg(all(feature = "alloc", feature = "compat_sync"))] pub use spin::RwLockWriteGuard;

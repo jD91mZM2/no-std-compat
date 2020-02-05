@@ -104,6 +104,9 @@ def generate(module, unstable, *namespaces):
             "))] pub use spin::"
         )
         out += (
+            prefix + "Mutex;\n" +
+            prefix + "MutexGuard;\n" +
+            prefix + "Once;\n" +
             prefix + "RwLock;\n" +
             prefix + "RwLockReadGuard;\n" +
             prefix + "RwLockWriteGuard;\n"
