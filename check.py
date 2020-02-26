@@ -2,6 +2,7 @@
 
 import subprocess
 import sys
+from pathlib import Path
 
 
 def powerset(input):
@@ -21,7 +22,7 @@ def powerset(input):
 def execute(args, **kwargs):
     cwd = ""
     if "cwd" in kwargs:
-        cwd += kwargs["cwd"] + "/ "
+        cwd += str(kwargs["cwd"]) + "/ "
     print(cwd + "$ " + " ".join(args))
     status = subprocess.run(args, **kwargs)
 
@@ -29,10 +30,13 @@ def execute(args, **kwargs):
         sys.exit(1)
 
 
-def check(toolchain, features):
+def check(toolchain, features, **kwargs):
     for subset in powerset(features):
         feature_str = ",".join(subset)
-        execute(["cargo", "+" + toolchain, "check", "--features", feature_str])
+        execute(
+            ["cargo", "+" + toolchain, "check", "--features", feature_str],
+            **kwargs
+        )
 
 
 features = [
@@ -45,5 +49,10 @@ features = [
 
 check("stable", features)
 check("nightly", features + ["unstable"])
+
+for dir in Path("example-crates").iterdir():
+    if not dir.joinpath("Cargo.toml").exists():
+        continue
+    execute(["cargo", "test", "--features", "std"], cwd=dir)
 
 execute(["cargo", "test"], cwd="example-crates")

@@ -64,15 +64,16 @@ default = [ "std" ] # Default to using the std
 std = [ "no-std-compat/std" ]
 ```
 
-3​. Optionally enable `no_std`, and import this crate renamed to
-   `std`. This ensures all old imports still work on `no_std`. You
-   could, of course, use any other name too. But this is what I would
-   recommend.
+3​. Enable `no_std`, and import this crate renamed to `std`. This ensures all
+   old imports still work on `no_std`. Even if you do want to use the std,
+   enabling `no_std` is okay - `no-std-compat` will pull in std if you send the
+   right feature flags anyway. You could, of course, use any other name than
+   "std" here too. But this is what I would recommend.
 
 `src/lib.rs`:
 
 ```rust
-#![cfg_attr(not(feature = "std"), no_std)]
+#![no_std]
 
 extern crate no_std_compat as std;
 ```

@@ -12,8 +12,20 @@
 // if #[cfg(feature = "std")] {
     #[cfg(feature = "std")]
     extern crate std;
+    #[cfg(feature = "std")]
+    pub mod prelude {
+        pub mod v1 {
+            pub use std::prelude::v1::*;
+            // Macros aren't included in the prelude for some reason
+            pub use std::{
+                format, vec,
+                print, println, eprint, eprintln, dbg
+            };
+        }
+    }
+    #[cfg(feature = "std")]
+    pub use std::*;
 // } else {
-    #[cfg(not(feature = "std"))]
     // The 2 underscores in the crate names are used to avoid
     // ambiguity between whether the user wants to use the public
     // module std::alloc or the private crate no_std_compat::alloc

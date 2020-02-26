@@ -1,4 +1,4 @@
-#![cfg_attr(not(feature = "std"), no_std)]
+#![no_std]
 #![feature(core_intrinsics)]
 
 extern crate no_std_compat as std;
