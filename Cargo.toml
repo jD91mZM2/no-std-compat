@@ -1,6 +1,6 @@
 [package]
 name = "no-std-compat"
-version = "0.3.1"
+version = "0.4.0"
 authors = ["jD91mZM2 <me@krake.one>"]
 exclude = [ "example-crates/**/*" ]
 description = "A `#![no_std]` compatibility layer that will make porting your crate to no_std *easy*."

@@ -139,6 +139,10 @@ pub mod prelude {
         pub use crate::{print, println, eprint, eprintln, dbg};
     }
 }
+pub mod primitive {
+    // Nightly-only, but not unstable. Manually added unstable feature.
+    #[cfg(feature = "unstable")] pub use __core::primitive::*;
+}
 pub mod ptr {
     pub use __core::ptr::*;
 }
