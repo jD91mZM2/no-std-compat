@@ -140,8 +140,7 @@ pub mod prelude {
     }
 }
 pub mod primitive {
-    // Nightly-only, but not unstable. Manually added unstable feature.
-    #[cfg(feature = "unstable")] pub use __core::primitive::*;
+    pub use __core::primitive::*;
 }
 pub mod ptr {
     pub use __core::ptr::*;
@@ -181,6 +180,7 @@ pub mod sync {
 }
 pub mod task {
     pub use __core::task::*;
+    #[cfg(all(feature = "alloc", feature = "unstable"))] pub use __alloc::task::*;
 }
 pub mod time {
     pub use __core::time::*;

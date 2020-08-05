@@ -39,7 +39,7 @@ def modules(crate):
     with open(lib) as f:
         contents = f.read()
 
-    modules = set()
+    modules = dict()
     for match in modules_regex.finditer(contents):
         module = match.group(1)
         unstable = False
@@ -58,7 +58,7 @@ def modules(crate):
         except OSError:
             pass
 
-        modules.add((module, unstable))
+        modules[module] = unstable
     return modules
 
 
@@ -95,8 +95,7 @@ def generate(module, unstable, *namespaces):
             prefix + "HashMap;\n" +
             prefix + "HashSet;\n"
         )
-
-    if module == "sync":
+    elif module == "sync":
         prefix = (
             "    #[cfg(all("
             "feature = \"alloc\", "
@@ -121,11 +120,18 @@ alloc = modules("liballoc")
 
 generated = {}
 
-for module, unstable in core & alloc:
+core_keys = set(core.keys())
+alloc_keys = set(alloc.keys())
+
+for module in core_keys & alloc_keys:
+    # TODO: separate these
+    unstable = core[module] or alloc[module]
     generated[module] = generate(module, unstable, "core", "alloc")
-for module, unstable in core - alloc:
+for module in core_keys - alloc_keys:
+    unstable = core[module]
     generated[module] = generate(module, unstable, "core")
-for module, unstable in alloc - core:
+for module in alloc_keys - core_keys:
+    unstable = alloc[module]
     generated[module] = generate(module, unstable, "alloc")
 
 generated["prelude"] = """pub mod prelude {
