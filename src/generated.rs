@@ -92,6 +92,9 @@ pub mod isize {
 pub mod iter {
     pub use __core::iter::*;
 }
+pub mod lazy {
+    #[cfg(feature = "unstable")] pub use __core::lazy::*;
+}
 pub mod marker {
     pub use __core::marker::*;
 }

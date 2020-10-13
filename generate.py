@@ -1,10 +1,18 @@
 #!/usr/bin/env python3
 
+from collections import namedtuple
+from dataclasses import dataclass
 import argparse
 import os
 import re
 import subprocess
 import sys
+
+Namespace = namedtuple("Namespace", "name module")
+
+@dataclass
+class Module:
+    unstable: bool
 
 # Parse arguments
 
@@ -13,7 +21,7 @@ parser = argparse.ArgumentParser(
 )
 parser.add_argument("--src", help=(
     "Specify the location of the rust source code. The default is "
-    "`$(rustc --print sysroot)/lib/rustlib/src/rust/src`"
+    "`$(rustc --print sysroot)/lib/rustlib/src/rust/library`"
 ))
 args = parser.parse_args()
 
@@ -21,7 +29,7 @@ if args.src is None:
     output = subprocess.run(["rustc", "--print", "sysroot"],
                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     args.src = os.path.join(output.stdout.decode("utf-8").strip(),
-                            "lib", "rustlib", "src", "rust", "src")
+                            "lib", "rustlib", "src", "rust", "library")
 
 
 # Read files
@@ -34,7 +42,10 @@ modules_regex = re.compile(
 
 
 def modules(crate):
-    root = os.path.join(args.src, crate)
+    """
+    Return a dictionary of all modules and whether they appear unstable or not.
+    """
+    root = os.path.join(args.src, crate, "src")
     lib = os.path.join(root, "lib.rs")
     with open(lib) as f:
         contents = f.read()
@@ -55,14 +66,19 @@ def modules(crate):
                         f"Module '{module}' from '{crate}' appears unstable",
                         file=sys.stderr
                     )
-        except OSError:
+        except OSError as e:
+            print(e, file=sys.stderr)
             pass
 
-        modules[module] = unstable
+        modules[module] = Module(unstable)
     return modules
 
 
-def generate(module, unstable, *namespaces):
+def generate(module, *namespaces):
+    """
+    Generate code for any module, given its name and which namespaces it appears
+    under and whether it's unstable or not.
+    """
     out = f"pub mod {module} {{\n"
 
     if module == "prelude":
@@ -72,9 +88,9 @@ def generate(module, unstable, *namespaces):
         out += "    "
 
         cfgs = []
-        if namespace != "core":
-            cfgs.append(f"feature = \"{namespace}\"")
-        if unstable:
+        if namespace.name != "core":
+            cfgs.append(f"feature = \"{namespace.name}\"")
+        if namespace.module.unstable:
             cfgs.append("feature = \"unstable\"")
 
         if len(cfgs) == 1:
@@ -82,7 +98,7 @@ def generate(module, unstable, *namespaces):
         elif len(cfgs) > 1:
             out += "#[cfg(all(" + ", ".join(cfgs) + "))] "
 
-        out += f"pub use __{namespace}::{module}::*;\n"
+        out += f"pub use __{namespace.name}::{module}::*;\n"
 
     if module == "collections":
         prefix = (
@@ -115,24 +131,42 @@ def generate(module, unstable, *namespaces):
     return out
 
 
-core = modules("libcore")
-alloc = modules("liballoc")
+# Main logic
+
+core = modules("core")
+alloc = modules("alloc")
+
+# Unstable overrides
+core["lazy"].unstable = True
 
 generated = {}
 
 core_keys = set(core.keys())
 alloc_keys = set(alloc.keys())
 
+# Appearing in both
 for module in core_keys & alloc_keys:
-    # TODO: separate these
-    unstable = core[module] or alloc[module]
-    generated[module] = generate(module, unstable, "core", "alloc")
+    generated[module] = generate(
+        module,
+        Namespace("core", core[module]),
+        Namespace("alloc", alloc[module]),
+    )
+
+# Only in core
 for module in core_keys - alloc_keys:
-    unstable = core[module]
-    generated[module] = generate(module, unstable, "core")
+    generated[module] = generate(
+        module,
+        Namespace("core", core[module]),
+    )
+
+# Only in alloc
 for module in alloc_keys - core_keys:
-    unstable = alloc[module]
-    generated[module] = generate(module, unstable, "alloc")
+    generated[module] = generate(
+        module,
+        Namespace("alloc", alloc[module]),
+    )
+
+# Complete module overrides
 
 generated["prelude"] = """pub mod prelude {
     pub mod v1 {
