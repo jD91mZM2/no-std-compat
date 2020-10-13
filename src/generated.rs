@@ -173,7 +173,7 @@ pub mod string {
 }
 pub mod sync {
     pub use __core::sync::*;
-    #[cfg(feature = "alloc")] pub use __alloc::sync::*;
+    #[cfg(all(feature = "alloc", not(target_os = "none")))] pub use __alloc::sync::*;
     #[cfg(all(feature = "alloc", feature = "compat_sync"))] pub use spin::Mutex;
     #[cfg(all(feature = "alloc", feature = "compat_sync"))] pub use spin::MutexGuard;
     #[cfg(all(feature = "alloc", feature = "compat_sync"))] pub use spin::Once;
@@ -183,7 +183,7 @@ pub mod sync {
 }
 pub mod task {
     pub use __core::task::*;
-    #[cfg(all(feature = "alloc", feature = "unstable"))] pub use __alloc::task::*;
+    #[cfg(all(feature = "alloc", feature = "unstable", not(target_os = "none")))] pub use __alloc::task::*;
 }
 pub mod time {
     pub use __core::time::*;

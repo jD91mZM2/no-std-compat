@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from collections import namedtuple
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import argparse
 import os
 import re
@@ -13,6 +13,7 @@ Namespace = namedtuple("Namespace", "name module")
 @dataclass
 class Module:
     unstable: bool
+    cfgs: list = field(default_factory=list)
 
 # Parse arguments
 
@@ -92,6 +93,7 @@ def generate(module, *namespaces):
             cfgs.append(f"feature = \"{namespace.name}\"")
         if namespace.module.unstable:
             cfgs.append("feature = \"unstable\"")
+        cfgs += namespace.module.cfgs
 
         if len(cfgs) == 1:
             out += f"#[cfg({cfgs[0]})] "
@@ -136,8 +138,10 @@ def generate(module, *namespaces):
 core = modules("core")
 alloc = modules("alloc")
 
-# Unstable overrides
+# Module overrides
 core["lazy"].unstable = True
+alloc["sync"].cfgs.append("not(target_os = \"none\")")
+alloc["task"].cfgs.append("not(target_os = \"none\")")
 
 generated = {}
 

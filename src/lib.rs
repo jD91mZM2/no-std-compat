@@ -3,6 +3,8 @@
             feature(core_intrinsics, core_panic, once_cell, raw, unicode_internals))]
 #![cfg_attr(all(not(feature = "std"), feature = "alloc", feature = "unstable"),
             feature(alloc_prelude, raw_vec_internals, wake_trait))]
+#![cfg_attr(all(not(feature = "std"), feature = "alloc", feature = "unstable", not(target_os = "none")),
+            feature(wake_trait))]
 
 // Can't use cfg_if! because it does not allow nesting :(
 
